@@ -17,8 +17,10 @@ object Settings {
     version := (version in LocalProject("all-platforms")).value,
     libgdxVersion := (libgdxVersion in LocalProject("all-platforms")).value,
     scalaVersion := (scalaVersion in LocalProject("all-platforms")).value,
+    resolvers += "bintray" at "http://dl.bintray.com/jmhofer/maven/",
     libraryDependencies ++= Seq(
-      "com.badlogicgames.gdx" % "gdx" % libgdxVersion.value
+      "com.badlogicgames.gdx" % "gdx" % libgdxVersion.value,
+      "de.johoop" % "rxjava-libgdx" % "0.1"
     ),
     javacOptions ++= Seq(
       "-Xlint",
@@ -37,7 +39,8 @@ object Settings {
       "-deprecation",
       "-feature",
       "-encoding", "UTF-8",
-      "-target:jvm-1.6"
+      "-target:jvm-1.6",
+      "-feature:_"
     ),
     cancelable := true,
     exportJars := true
@@ -62,7 +65,7 @@ object Settings {
       "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-armeabi-v7a",
       "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-x86"
     ),
-    nativeExtractions <<= (baseDirectory) { base => Seq(
+    nativeExtractions <<= baseDirectory { base => Seq(
       ("natives-armeabi.jar", new ExactFilter("libgdx.so"), base / "libs" / "armeabi"),
       ("natives-armeabi-v7a.jar", new ExactFilter("libgdx.so"), base / "libs" / "armeabi-v7a"),
       ("natives-x86.jar", new ExactFilter("libgdx.so"), base / "libs" / "x86")
@@ -89,7 +92,7 @@ object Tasks {
         }
       }
     },
-    compile in Compile <<= (compile in Compile) dependsOn (extractNatives)
+    compile in Compile <<= (compile in Compile) dependsOn extractNatives
   )
 
   import java.io.{File => JFile}
@@ -137,28 +140,30 @@ object Tasks {
 object LibgdxBuild extends Build {
   lazy val libgdxVersion = settingKey[String]("version of Libgdx library")
 
+  lazy val util = uri("../libgdx-utils")
+
   lazy val core = Project(
     id       = "core",
     base     = file("core"),
     settings = Settings.core
-  )
+  ) dependsOn util
 
   lazy val desktop = Project(
     id       = "desktop",
     base     = file("desktop"),
     settings = Settings.desktop
-  ).dependsOn(core)
+  ) dependsOn core
 
   lazy val android = Project(
     id       = "android",
     base     = file("android"),
     settings = Settings.android
-  ).dependsOn(core)
+  ) dependsOn core
 
   lazy val all = Project(
     id       = "all-platforms",
     base     = file("."),
     settings = Settings.core
-  ).aggregate(core, desktop, android)
+  ) aggregate (core, desktop, android)
 }
 
