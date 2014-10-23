@@ -20,7 +20,8 @@ object Settings {
     resolvers += "bintray" at "http://dl.bintray.com/jmhofer/maven/",
     libraryDependencies ++= Seq(
       "com.badlogicgames.gdx" % "gdx" % libgdxVersion.value,
-      "de.johoop" % "rxjava-libgdx" % "0.1"
+      "de.johoop" % "rxjava-libgdx" % "0.2" % "compile",
+      "io.reactivex" %% "rxscala" % "0.21.1" % "compile"
     ),
     javacOptions ++= Seq(
       "-Xlint",
@@ -40,7 +41,7 @@ object Settings {
       "-feature",
       "-encoding", "UTF-8",
       "-target:jvm-1.6",
-      "-feature:_"
+      "-language:_"
     ),
     cancelable := true,
     exportJars := true
