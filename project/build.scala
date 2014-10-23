@@ -4,12 +4,13 @@ import Keys._
 import android.Keys._
 import android.Plugin.androidBuild
 
+import scala.io.Source
+
 object Settings {
   import LibgdxBuild.libgdxVersion
 
   lazy val nativeExtractions = SettingKey[Seq[(String, NameFilter, File)]](
-    "native-extractions", "(jar name partial, sbt.NameFilter of files to extract, destination directory)"
-  )
+    "native-extractions", "(jar name partial, sbt.NameFilter of files to extract, destination directory)")
 
   lazy val desktopJarName = SettingKey[String]("desktop-jar-name", "name of JAR file for desktop")
 
@@ -21,60 +22,53 @@ object Settings {
     libraryDependencies ++= Seq(
       "com.badlogicgames.gdx" % "gdx" % libgdxVersion.value,
       "de.johoop" % "rxjava-libgdx" % "0.2" % "compile",
-      "io.reactivex" %% "rxscala" % "0.21.1" % "compile"
-    ),
+      "io.reactivex" %% "rxscala" % "0.21.1" % "compile"),
+
     javacOptions ++= Seq(
       "-Xlint",
       "-encoding", "UTF-8",
       "-source", "1.6",
-      "-target", "1.6"
-    ),
+      "-target", "1.6"),
+
     scalacOptions ++= Seq(
       "-Xlint",
       "-Ywarn-dead-code",
-      "-Ywarn-value-discard",
       "-Ywarn-numeric-widen",
       "-Ywarn-unused",
       "-Ywarn-unused-import",
       "-unchecked",
       "-deprecation",
-      "-feature",
       "-encoding", "UTF-8",
       "-target:jvm-1.6",
-      "-language:_"
-    ),
+      "-language:_"),
+
     cancelable := true,
-    exportJars := true
-  )
+    exportJars := true)
 
   lazy val desktop = core ++ Seq(
     libraryDependencies ++= Seq(
       "net.sf.proguard" % "proguard-base" % "4.11" % "provided",
       "com.badlogicgames.gdx" % "gdx-backend-lwjgl" % libgdxVersion.value,
-      "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value classifier "natives-desktop"
-    ),
+      "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value classifier "natives-desktop"),
     fork in Compile := true,
     unmanagedResourceDirectories in Compile += file("android/assets"),
     desktopJarName := "sample-game",
-    Tasks.assembly
-  )
+    Tasks.assembly)
 
   lazy val android = core ++ Tasks.natives ++ androidBuild ++ Seq(
     libraryDependencies ++= Seq(
       "com.badlogicgames.gdx" % "gdx-backend-android" % libgdxVersion.value,
       "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-armeabi",
       "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-armeabi-v7a",
-      "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-x86"
-    ),
+      "com.badlogicgames.gdx" % "gdx-platform" % libgdxVersion.value % "natives" classifier "natives-x86"),
     nativeExtractions <<= baseDirectory { base => Seq(
       ("natives-armeabi.jar", new ExactFilter("libgdx.so"), base / "libs" / "armeabi"),
       ("natives-armeabi-v7a.jar", new ExactFilter("libgdx.so"), base / "libs" / "armeabi-v7a"),
-      ("natives-x86.jar", new ExactFilter("libgdx.so"), base / "libs" / "x86")
-    )},
+      ("natives-x86.jar", new ExactFilter("libgdx.so"), base / "libs" / "x86"))
+    },
     platformTarget in Android := "android-19",
-    proguardOptions in Android ++= scala.io.Source.fromFile(file("core/proguard-project.txt")).getLines.toList ++
-                                   scala.io.Source.fromFile(file("android/proguard-project.txt")).getLines.toList
-  )
+    proguardOptions in Android ++= Source.fromFile(file("core/proguard-project.txt")).getLines.toList ++
+                                   Source.fromFile(file("android/proguard-project.txt")).getLines.toList)
 }
 
 object Tasks {
@@ -93,10 +87,9 @@ object Tasks {
         }
       }
     },
-    compile in Compile <<= (compile in Compile) dependsOn extractNatives
-  )
+    compile in Compile <<= (compile in Compile) dependsOn extractNatives)
 
-  import java.io.{File => JFile}
+  import java.io.{File => FileJ}
   import Settings.desktopJarName
 
   lazy val assemblyKey = TaskKey[Unit]("assembly", "Assembly desktop using Proguard")
@@ -113,8 +106,8 @@ object Tasks {
     val onlyProvidedNames = provided -- compile -- runtime -- optional
     val (onlyProvided, withoutProvided) = dependencies.partition(cpe => onlyProvidedNames contains cpe.data)
     val exclusions = Seq("!META-INF/MANIFEST.MF", "!library.properties").mkString(",")
-    val inJars = withoutProvided.map("\""+_.data.absolutePath+"\"("+exclusions+")").mkString(JFile.pathSeparator)
-    val libraryJars = onlyProvided.map("\""+_.data.absolutePath+"\"").mkString(JFile.pathSeparator)
+    val inJars = withoutProvided.map("\""+_.data.absolutePath+"\"("+exclusions+")").mkString(FileJ.pathSeparator)
+    val libraryJars = onlyProvided.map("\""+_.data.absolutePath+"\"").mkString(FileJ.pathSeparator)
     val outfile = "\""+(target/"%s-%s.jar".format(name, ver)).absolutePath+"\""
     val classfiles = "\"" + cd.absolutePath + "\""
     val manifest = "\"" + file("desktop/manifest").absolutePath + "\""
@@ -141,30 +134,11 @@ object Tasks {
 object LibgdxBuild extends Build {
   lazy val libgdxVersion = settingKey[String]("version of Libgdx library")
 
-  lazy val util = uri("../libgdx-utils")
+  lazy val util    = RootProject(uri("../libgdx-utils"))
 
-  lazy val core = Project(
-    id       = "core",
-    base     = file("core"),
-    settings = Settings.core
-  ) dependsOn util
+  lazy val core    = Project(id = "core",          base = file("core"),   settings = Settings.core)     dependsOn util
+  lazy val desktop = Project(id = "desktop",       base = file("desktop"), settings = Settings.desktop) dependsOn core
+  lazy val android = Project(id = "android",       base = file("android"), settings = Settings.android) dependsOn core
 
-  lazy val desktop = Project(
-    id       = "desktop",
-    base     = file("desktop"),
-    settings = Settings.desktop
-  ) dependsOn core
-
-  lazy val android = Project(
-    id       = "android",
-    base     = file("android"),
-    settings = Settings.android
-  ) dependsOn core
-
-  lazy val all = Project(
-    id       = "all-platforms",
-    base     = file("."),
-    settings = Settings.core
-  ) aggregate (core, desktop, android)
+  lazy val all     = Project(id = "all-platforms", base = file("."),       settings = Settings.core) aggregate (core, desktop, android)
 }
-

@@ -15,7 +15,7 @@ class SampleRxGame extends RxGame {
     val renders: Observable[RenderEvent] = GdxLifecycleEventSource render connector
     val create: Observable[CreateEvent] = GdxLifecycleEventSource create connector
 
-    val resources = create map { _ => Resources() }
+    val resources = create take 1 map { _ => Resources() }
     val gameRenders = renders.scan(Game()) { case (game, render) => game.copy(t = System.currentTimeMillis) }
 
     val gameRendersWithResources = gameRenders combineLatest resources
@@ -25,7 +25,6 @@ class SampleRxGame extends RxGame {
 
     // start the whole thing
     connector.connect
-    ()
   }
 }
 
