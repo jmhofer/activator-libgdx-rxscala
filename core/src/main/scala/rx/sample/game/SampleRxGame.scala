@@ -1,11 +1,11 @@
-package de.johoop.sample.game
+package rx.sample.game
 
-import rx.lang.scala.observables.ConnectableObservable
-import rx.libgdx.events.lifecycle.{RenderEvent, CreateEvent, LifecycleEvent}
-import rx.libgdx.sources.GdxLifecycleEventSource
-import rx.{Observable => ObservableJ, RxGame}
 import rx.lang.scala.JavaConversions._
 import rx.lang.scala.Observable
+import rx.lang.scala.observables.ConnectableObservable
+import rx.libgdx.events.lifecycle.{CreateEvent, LifecycleEvent, RenderEvent}
+import rx.libgdx.sources.GdxLifecycleEventSource
+import rx.{RxGame, Observable => ObservableJ}
 
 class SampleRxGame extends RxGame {
   def start(lifecycle: ObservableJ[LifecycleEvent]): Unit = {

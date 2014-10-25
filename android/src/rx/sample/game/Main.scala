@@ -1,4 +1,4 @@
-package de.johoop.sample.game
+package rx.sample.game
 
 import android.os.Bundle
 import com.badlogic.gdx.backends.android._

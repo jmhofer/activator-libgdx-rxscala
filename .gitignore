@@ -7,3 +7,4 @@ project/plugins/project
 bin/
 gen/
 \.idea/
+project/activator-*.sbt

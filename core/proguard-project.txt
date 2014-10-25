@@ -1,6 +1,6 @@
 ## Entry point
 
--keep public class de.johoop.sample.game.Main
+-keep public class rx.sample.game.Main
 
 ## LibGDX
 
@@ -89,3 +89,6 @@
     public static ** valueOf(java.lang.String);
 }
 
+# ignore RxJava warnings about Unsafe as they are harmless
+
+-dontwarn sun.misc.Unsafe

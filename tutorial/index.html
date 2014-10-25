@@ -1,0 +1,53 @@
+<html>
+    <head>libGDX and RxScala - Activator Template</head>
+
+    <body>
+        <div>
+            <h2>Using libGDX with RxScala</h2>
+            <p><b>Welcome!</b></p>
+            <p>
+                This tutorial demonstrates how to start developing a game (for Android, probably) in a
+                <a href="http://www.reactivemanifesto.org/"><b>reactive</b></a> way using two great libraries combined:
+                <a href="http://libgdx.badlogicgames.com/"><b>libGDX</b></a> and
+                <a href="https://github.com/ReactiveX/RxScala"><b>RxScala</b></a>.
+            </p>
+            <p>
+                These two libraries are glued together by the small utility library <a href="https://github.com/jmhofer/rxjava-libgdx"><b>rxjava-libgdx</b></a>,
+                which provides observables for typical libGDX events like input, lifecycle or physics events. It's very much a work in progress, though.
+            </p>
+            <p>
+                The structure and build of this project is quite complicated at a first glance. This is due to libGDX being a <b>multi-platform framework</b>.
+                Also, targeting <b>Android</b> in a build system always creates some overhead.
+            </p>
+            <p><i>Next: <a href="#tutorial/1">Project Structure</a></i></p>
+        </div>
+
+        <div>
+            <h2>Project Structure</h2>
+            <p>
+                This build is a typical <a href="http://scala-sbt.org"><b>sbt</b></a> <b>multi-project</b> build.
+            </p>
+            <p>
+                For building Android,
+                it uses the <a href="https://github.com/pfn/android-sdk-plugin"><b>android-sdk-plugin</b></a>
+                (which is included in the <a href="#code/project/plugins.sbt" class="shortcut">plugins</a> definition).
+            </p>
+            <p>
+                You can view the build definition <a href="#code/project/Build.scala" class="shortcut">here</a>.
+            </p>
+            <p>
+                You will notice that there are three sub-projects defined in the build:
+                <ul>
+                    <li><a href="#code/core" class="shortcut"><b>core</b></a> - This is the place for the platform-independent game core.</li>
+                    <li><a href="#code/desktop" class="shortcut"><b>desktop</b></a> - Here goes code related to the desktop version of the game.</li>
+                    <li><a href="#code/android" class="shortcut"><b>android</b></a> - Here goes code related to the Android version of the game.</li>
+                </ul>
+            </p>
+            <p>
+                In the <tt>desktop</tt> and <tt>android</tt> directories, you'll mostly find boilerplate necessary for the game to run on these platforms.</p>
+            <p>
+                The interesting things happen in <tt>core</tt>.
+            </p>
+        </div>
+    </body>
+</html>

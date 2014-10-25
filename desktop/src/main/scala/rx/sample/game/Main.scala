@@ -1,4 +1,4 @@
-package de.johoop.sample.game
+package rx.sample.game
 
 import com.badlogic.gdx.backends.lwjgl._
 import rx.RxApplication

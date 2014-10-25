@@ -18,11 +18,15 @@ object Settings {
     version := (version in LocalProject("all-platforms")).value,
     libgdxVersion := (libgdxVersion in LocalProject("all-platforms")).value,
     scalaVersion := (scalaVersion in LocalProject("all-platforms")).value,
-    resolvers += "bintray" at "http://dl.bintray.com/jmhofer/maven/",
+
+    resolvers ++= Seq(
+      "bintray-jmhofer" at "http://dl.bintray.com/jmhofer/maven/",
+      "bintray-rxscala" at "http://dl.bintray.com/reactivex/RxJava/"),
+
     libraryDependencies ++= Seq(
       "com.badlogicgames.gdx" % "gdx" % libgdxVersion.value,
-      "de.johoop" % "rxjava-libgdx" % "0.2" % "compile",
-      "io.reactivex" %% "rxscala" % "0.21.1" % "compile"),
+      "de.johoop" % "rxjava-libgdx" % "0.2.1" % "compile",
+      "io.reactivex" %% "rxscala" % "0.22.0" % "compile"),
 
     javacOptions ++= Seq(
       "-Xlint",
@@ -69,6 +73,10 @@ object Settings {
     platformTarget in Android := "android-19",
     proguardOptions in Android ++= Source.fromFile(file("core/proguard-project.txt")).getLines.toList ++
                                    Source.fromFile(file("android/proguard-project.txt")).getLines.toList)
+
+  lazy val all = core ++ Seq(
+    name := "libgdx-rxscala",
+    run in Compile <<= run in (LibgdxBuild.desktop, Compile))
 }
 
 object Tasks {
@@ -138,5 +146,5 @@ object LibgdxBuild extends Build {
   lazy val desktop = Project(id = "desktop",       base = file("desktop"), settings = Settings.desktop) dependsOn core
   lazy val android = Project(id = "android",       base = file("android"), settings = Settings.android) dependsOn core
 
-  lazy val all     = Project(id = "all-platforms", base = file("."),       settings = Settings.core) aggregate (core, desktop, android)
+  lazy val all     = Project(id = "all-platforms", base = file("."),       settings = Settings.all) aggregate (core, desktop, android)
 }
