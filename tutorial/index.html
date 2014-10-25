@@ -144,6 +144,49 @@
                 <a href="#code/core/src/main/scala/rx/sample/game/SampleRxGame.scala" class="shortcut"><b>our game code</b></a>
                 into the <code>start</code> method of <code>RxGame</code> and begin with handling the lifecycle events.
             </p>
+            <p><i>Next: <a href="#tutorial/5">Tuning into the Lifecycle</a></i></p>
+        </div>
+
+        <div>
+            <h2>Tuning into the Lifecycle</h2>
+
+            <p><a href="#code/core/src/main/scala/rx/sample/game/SampleRxGame.scala" class="shortcut">Lifecycle game code</a></p>
+            <p>
+                The first thing to do with the stream of lifecycles is publish it to multiple subscribers. This leaves us
+                with a <a href="https://github.com/ReactiveX/RxJava/wiki/Connectable-Observable-Operators"><code>ConnectableObservable</code></a>
+                called <code><b>connector</b></code>.
+            </p>
+            <p>
+                From this, we retrieve the very simple stream <code><b>create</b></code> of create events (well, just the one event),
+                as well as the render stream <code><b>renders</b></code>.
+            </p>
+            <p>
+                Unfortunately, we need some ugly type annotations around this in order to tell the compiler that we want to work with the Scala
+                version of all the observables instead of the Java version.
+            </p>
+            <p>
+                We simply map the <code>create</code> event (which doesn't carry any information itself) into game resources.
+                This is a very nice way of <b>making the resources accessible to
+                other streams</b> (especially the render stream), without having to resort to singletons or mutable state anywhere.
+            </p>
+            <p>
+                Next, we <a href="https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#scan"><code><b>scan</b></code></a> the render stream
+                into a stream of game events called <code><b>gameRenders</b></code>. This allows us to compute a new game world from the previous one on each render step.
+                This is a simple, yet very neat way of stepping through your game without mutation (as long as you don't want to do game
+                computations independent of render events).
+            </p>
+            <p>
+                In order to be able to display the game state, we still have to combine our game render events with the resources.
+                This is easily achieved via the <a href="https://github.com/ReactiveX/RxJava/wiki/Combining-Observables#combinelatest"><code><b>combineLatest</b></code></a>
+                operator.
+            </p>
+            <p>
+                Finally, we subscribe to the combined stream with a very simple render method defined in the <code>SampleRxGame</code> companion object below,
+                and connect.
+            </p>
+            <p>
+                That's it (for now)!
+            </p>
         </div>
     </body>
 </html>
