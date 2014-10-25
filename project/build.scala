@@ -134,9 +134,7 @@ object Tasks {
 object LibgdxBuild extends Build {
   lazy val libgdxVersion = settingKey[String]("version of Libgdx library")
 
-  lazy val util    = RootProject(uri("../libgdx-utils"))
-
-  lazy val core    = Project(id = "core",          base = file("core"),   settings = Settings.core)     dependsOn util
+  lazy val core    = Project(id = "core",          base = file("core"),   settings = Settings.core)
   lazy val desktop = Project(id = "desktop",       base = file("desktop"), settings = Settings.desktop) dependsOn core
   lazy val android = Project(id = "android",       base = file("android"), settings = Settings.android) dependsOn core
 
