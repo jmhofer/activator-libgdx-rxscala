@@ -1,4 +1,4 @@
-# activator-libgdx-rxscala - Typesafe activator template for libGDX development with RxScala
+# Typesafe Activator template for libGDX development with RxScala
 
 ## Usage
 
