@@ -118,6 +118,32 @@
                 This tutorial is based on RxJava/RxScala, though, because I think that this is a very good choice for Android
                 development specifically.
             </p>
+            <p><i>Next: <a href="#tutorial/4">Reactive Game Lifecycle</a></i></p>
+        </div>
+
+        <div>
+            <h2>Reactive Game Lifecycle</h2>
+
+            <p>
+                The starting point for a libGDX game is its <b>lifecycle</b>, usually manifested in an
+                <tt><b><a href="http://libgdx.badlogicgames.com/nightlies/docs/api/com/badlogic/gdx/ApplicationListener.html">ApplicationListener</a></b></tt>.
+            </p>
+            <p>
+                However, we'd like to have a stream of observable <b>lifecycle events</b> instead. And that's exactly what
+                <tt><b><a href="https://github.com/jmhofer/rxjava-libgdx/blob/master/src/main/java/rx/RxGame.java">RxGame</a></b></tt> gives us.
+            </p>
+            <p>
+                We just have to wire it up first:
+                <ul>
+                    <li><a href="#code/android/src/rx/sample/game/Main.scala" class="shortcut">Android Wiring Code</a></li>
+                    <li><a href="#code/desktop/src/main/scala/rx/sample/game/Main.scala" class="shortcut">Desktop Wiring Code</a></li>
+                </ul>
+            </p>
+            <p>
+                After that, we can finally start putting
+                <a href="#code/core/src/main/scala/rx/sample/game/SampleRxGame.scala" class="shortcut"><b>our game code</b></a>
+                into the <code>start</code> method of <code>RxGame</code> and begin with handling the lifecycle events.
+            </p>
         </div>
     </body>
 </html>
