@@ -17,7 +17,7 @@
             </p>
             <p>
                 The structure and build of this project is quite complicated at a first glance. This is due to libGDX being a <b>multi-platform framework</b>.
-                Also, targeting <b>Android</b> in a build system always creates some overhead.
+                Also, targeting <b>Android</b> in a build system always creates some overhead. However, I'll walk you through.
             </p>
             <p><i>Next: <a href="#tutorial/1">Project Structure</a></i></p>
         </div>
@@ -47,6 +47,44 @@
                 In the <tt>desktop</tt> and <tt>android</tt> directories, you'll mostly find boilerplate necessary for the game to run on these platforms.</p>
             <p>
                 The interesting things happen in <tt>core</tt>.
+            </p>
+            <p><i>Next: <a href="#tutorial/2">Oldschool vs. Reactive</a></i></p>
+
+        </div>
+        <div>
+            <h2>Oldschool vs. Reactive</h2>
+            <p>
+                Developing a <b>libGDX</b> game is a quite straightforward experience, thanks to the clear structure of the framework.
+                However, libGDX expects an <b>oldschool</b> object-orientated (aka non-functional)
+                <a href="http://elm-lang.org/learn/Escape-from-Callback-Hell.elm">callback-ridden</a> way of doing things from you.
+            </p>
+            <p>
+                A simple oldschool libGDX game might start out something like this (for more information,
+                see <a href="https://github.com/libgdx/libgdx/wiki/Extending%20the%20Simple%20Game">here</a>):
+<pre><code>class SampleGame extends Game {
+  var batch: SpriteBatch = _
+  var font: BitmapFont = _
+
+  def create(): Unit = {
+    batch = new SpriteBatch
+    font = new BitmapFont
+    setScreen(new MainMenuScreen(this))
+  }
+
+  def render(): Unit = super.render()
+
+  def dispose(): Unit = {
+    batch.dispose()
+    font.dispose()
+  }
+}</code></pre>
+            </p>
+            <p>
+                See all the vars? See all the effects? See all the callbacks?
+            </p>
+            <p>
+                We don't want to play by these rules. We're the cool new gals. We're the <b>Reactivsters</b>. And that's why we're going
+                to break out of that framework and basically use <b>Rx Observables</b> for everything.
             </p>
         </div>
     </body>
